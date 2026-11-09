@@ -20,6 +20,7 @@ export const IconMore = I('M5 12h.01M12 12h.01M19 12h.01');
 export const IconClock = I('M12 7v5l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z');
 export const IconArrowLeft = I('M15 6l-6 6 6 6');
 export const IconArrowRight = I('M9 6l6 6-6 6');
+export const IconBook = I('M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2V5zM4 19a2 2 0 012-2h13');
 export function Logo({ className = '' }: { className?: string }) {
   return <img src={`${import.meta.env.BASE_URL}brand-mark.png`} alt="" aria-hidden="true" className={`object-contain ${className}`} />;
 }

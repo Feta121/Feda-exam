@@ -1,24 +1,34 @@
-# How to apply this update (only the changed files)
+# Update: seniors' questions + Sources page (24 files)
 
-Every file here sits in the same folder path as in your project. Upload each one to the SAME folder in your GitHub repo (it replaces the old copy), then Vercel republishes by itself.
+Every file sits in the same folder path as in your GitHub repo. Uploading replaces the old copy (or adds the new file), then Vercel republishes by itself.
 
-| File in this update            | Open this folder in your GitHub repo | What changed |
-|--------------------------------|--------------------------------------|--------------|
-| index.html                     | (repo root, the front page)          | Light theme default + instant loading splash with the full logo |
-| CHANGELOG.md                   | (repo root)                          | Notes only (optional) |
-| src/App.tsx                    | src                                  | Uses the new loading screen |
-| src/index.css                  | src                                  | Loading-bar animation |
-| src/components/LoadingScreen.tsx | src/components                     | NEW file: loading screen with the full logo |
-| src/pages/ExamRun.tsx          | src/pages                            | Fixed top bar on phones |
-| src/app.test.tsx               | src                                  | Tests (optional, not used by the website) |
-| src/theme.test.ts              | src                                  | NEW tests (optional, not used by the website) |
+## Fastest way (one go)
+1. Unzip this update.
+2. Go to your repository's FRONT PAGE on github.com (not inside any folder).
+3. Add file -> Upload files.
+4. Open the unzipped folder, select everything inside it (CHANGELOG.md, README.md, and the folders data, pipeline, public, scripts, src) and drag it all in at once.
+   Leave out HOW-TO-APPLY.md if you like (it is only these instructions).
+5. Commit changes. Open the commit afterwards: it should list 24 files (about 8 MB, the biggest is data/question_bank.json at 4.5 MB, well inside GitHub's limits).
+6. In Vercel -> your project -> Deployments, wait for "Ready" (about a minute), then reload feda-quali-prep.vercel.app.
+   If the old version still shows, close the tab and reopen it, or clear the site data for that address.
 
-## Steps
-1. Go to your repository on github.com.
-2. For each row: click into the folder shown in the third column (for the root, stay on the front page).
-3. Click Add file -> Upload files, drag that one file in, type a short message, click Commit changes.
-   (You will do this for 5 places: root, src, src/components, src/pages. The two test files are optional.)
-4. Open vercel.com -> your project -> Deployments. A new deployment appears and shows "Building" then "Ready" (about a minute).
-5. Open feda-quali-prep.vercel.app on your phone. If you still see the old version, close the tab and reopen it, or clear the site data for that address.
+## What is in it
+| File | What changed |
+|------|--------------|
+| public/questions.json | Question bank now includes the 34 new questions (SEN-001..SEN-034) |
+| public/sources.json | NEW: the list of sources, their descriptions and titles for the Sources page |
+| public/sources/*.jpg | NEW: the first-page picture of each of the 5 sources |
+| public/extraction_report.json, data/extraction_report.json | Updated counts |
+| data/question_bank.json | Full bank including the new questions (used only when rebuilding) |
+| src/pages/Sources.tsx | NEW: the Sources page |
+| src/pages/Practice.tsx | New Source filter |
+| src/pages/ExamSetup.tsx | New "By source" exam type |
+| src/pages/History.tsx | Shows "Source" as an exam type |
+| src/App.tsx, src/components/Layout.tsx, src/components/icons.tsx | New menu item and route for Sources |
+| src/types.ts | New types for sources and the source exam type |
+| src/app.test.tsx | 13 new tests (optional, not used by the website) |
+| scripts/build-questions.mjs | Knows the new source |
+| pipeline/add_seniors.py, pipeline/build_sources.py | NEW: the scripts used to add the questions and build the sources list (optional) |
+| CHANGELOG.md, README.md | Notes |
 
-You do not need to change any Vercel setting for this update.
+Nothing needs changing in Vercel's settings. Your logo files are unchanged.

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { IconBookmark, IconChart, IconExam, IconGrid, IconHistory, IconHome, IconMoon, IconMore, IconPractice, IconShield, IconSun, Logo } from './icons';
+import { IconBook, IconBookmark, IconChart, IconExam, IconGrid, IconHistory, IconHome, IconMoon, IconMore, IconPractice, IconShield, IconSun, Logo } from './icons';
 import { useApp, adminConfigured } from '../state/AppContext';
 import { KEYS, write } from '../lib/storage';
 
@@ -15,6 +15,7 @@ const MORE: Item[] = [
   { to: '/weak', label: 'Weak Areas', icon: IconChart },
   { to: '/saved', label: 'Saved & Wrong', icon: IconBookmark },
   { to: '/history', label: 'History', icon: IconHistory },
+  { to: '/sources', label: 'Sources', icon: IconBook },
 ];
 
 export function useTheme() {

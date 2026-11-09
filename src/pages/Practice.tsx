@@ -8,10 +8,11 @@ import { filterPool, optionOrderFor, shuffle } from '../lib/exam';
 import { latestWrong } from '../lib/analytics';
 
 export default function Practice() {
-  const { questions, subjects, settings, setSettings, log, addLog, bookmarks, toggleBookmark, hiddenIds } = useApp();
+  const { questions, playable, subjects, settings, setSettings, log, addLog, bookmarks, toggleBookmark, hiddenIds } = useApp();
   const [params, setParams] = useSearchParams();
   const mode = params.get('mode') || '';
   const subject = params.get('subject') || '';
+  const source = params.get('source') || '';
   const topic = params.get('topic') || '';
   const [shuffled, setShuffled] = useState(true);
   const [queue, setQueue] = useState<string[]>([]);
@@ -25,17 +26,21 @@ export default function Practice() {
   const pool = useMemo(() => {
     const base = { includeAi: settings.includeAi, hiddenIds, subjects: subject ? [subject] : undefined };
     let p = filterPool(questions, mode === 'wrong' ? { ...base, ids: latestWrong(log) } : mode === 'bookmarks' ? { ...base, ids: bookmarks } : base);
+    if (source) p = p.filter((q) => q.source === source);
     if (topic) p = p.filter((q) => q.topic === topic);
     return p;
     // `log` and `bookmarks` are read once per (re)build on purpose: changing them mid-session must not reshuffle the queue.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questions, subject, topic, mode, settings.includeAi, hiddenIds]);
+  }, [questions, subject, source, topic, mode, settings.includeAi, hiddenIds]);
 
   const topics = useMemo(() => {
     const ts = new Set<string>();
-    filterPool(questions, { includeAi: true, hiddenIds, subjects: subject ? [subject] : undefined }).forEach((q) => q.topic && ts.add(q.topic));
+    filterPool(questions, { includeAi: true, hiddenIds, subjects: subject ? [subject] : undefined })
+      .filter((q) => !source || q.source === source)
+      .forEach((q) => q.topic && ts.add(q.topic));
     return [...ts].sort();
-  }, [questions, subject, hiddenIds]);
+  }, [questions, subject, source, hiddenIds]);
+  const sourceNames = useMemo(() => [...new Set(playable.map((q) => q.source))], [playable]);
 
   useEffect(() => {
     const ids = pool.map((q) => q.id);
@@ -89,19 +94,23 @@ export default function Practice() {
   const setParam = (k: string, v: string) => {
     const n = new URLSearchParams(params);
     if (v) n.set(k, v); else n.delete(k);
-    if (k === 'subject') n.delete('topic');
+    if (k === 'subject' || k === 'source') n.delete('topic');
     setParams(n, { replace: true });
   };
 
   return (
     <div>
       <PageHeader title="Practice" subtitle={mode === 'wrong' ? 'Questions you last answered incorrectly' : mode === 'bookmarks' ? 'Your bookmarked questions' : 'Untimed practice: click an answer to see the result and explanation straight away'} />
-      <div className="card mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="card mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
         <Select label="Subject" value={subject} onChange={(v) => setParam('subject', v)}>
           <option value="">All subjects</option>
           {subjects.map((s) => <option key={s}>{s}</option>)}
         </Select>
-        <Select label="Topic" value={topic} onChange={(v) => setParam('topic', v)}>
+        <Select label="Source" value={source} onChange={(v) => setParam('source', v)}>
+          <option value="">All sources</option>
+          {sourceNames.map((n) => <option key={n}>{n}</option>)}
+        </Select>
+        <Select label="Topic / chapter" value={topic} onChange={(v) => setParam('topic', v)}>
           <option value="">All topics</option>
           {topics.map((t) => <option key={t}>{t}</option>)}
         </Select>

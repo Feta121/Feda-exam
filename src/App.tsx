@@ -12,6 +12,7 @@ import Weak from './pages/Weak';
 import Saved from './pages/Saved';
 import History from './pages/History';
 import Admin from './pages/Admin';
+import Sources from './pages/Sources';
 
 export default function App() {
   const { loading, error } = useApp();
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="weak" element={<Weak />} />
         <Route path="saved" element={<Saved />} />
         <Route path="history" element={<History />} />
+        <Route path="sources" element={<Sources />} />
         <Route path="admin" element={<Admin />} />
         <Route path="*" element={<Dashboard />} />
       </Route>

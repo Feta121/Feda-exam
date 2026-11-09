@@ -12,3 +12,8 @@
 - Exam page header on phones: two tidy rows (logo + title + timer, then progress + Questions/Submit); nothing wraps into a vertical column.
 - Light theme is now the default on every device; dark is used only after the student switches to it.
 - The full logo picture now appears on the loading screens (instant splash before the app loads, and the "Loading question bank" screen).
+
+## Round 4 corrections
+- Added 34 questions from seniors_.docx (ids SEN-001 to SEN-034) as a new source, "Seniors' Questions". Their answers and explanations are the ones written in the document. No duplicates of existing questions were found.
+- New Sources page: each source has its first-page picture, a description, counts, and practise / mock-exam buttons. Tapping the picture lists the titles inside it (chapters for the two books that have them) with a Practise button for each title.
+- Practice has a new Source filter, and the mock exam setup has a new "By source" type (a whole source, or one of its titles).

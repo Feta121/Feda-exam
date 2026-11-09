@@ -3,7 +3,7 @@ import { useApp } from '../state/AppContext';
 import { EmptyState, PageHeader } from '../components/ui';
 import { formatClock, repeatSession } from '../lib/exam';
 
-const TYPE: Record<string, string> = { mock: 'Mock', random: 'Random', subject: 'Subject', wrong: 'Wrong answers', bookmarks: 'Bookmarks' };
+const TYPE: Record<string, string> = { mock: 'Mock', random: 'Random', subject: 'Subject', source: 'Source', wrong: 'Wrong answers', bookmarks: 'Bookmarks' };
 
 export default function History() {
   const { attempts, byId, saveSession } = useApp();

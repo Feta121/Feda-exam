@@ -1,7 +1,7 @@
 // Converts data/question_bank.json (full extraction output) into the compact public/questions.json the app loads.
 import fs from 'node:fs';
 const bank = JSON.parse(fs.readFileSync(new URL('../data/question_bank.json', import.meta.url), 'utf8'));
-const srcCode = { 1: 'A Comprehensive Review 1001', 2: 'Arba Minch Mock Exams 2025', 3: 'EHPLE Practice Test 2025', 4: "Lippincott's 1001" };
+const srcCode = { 1: 'A Comprehensive Review 1001', 2: 'Arba Minch Mock Exams 2025', 3: 'EHPLE Practice Test 2025', 4: "Lippincott's 1001", 5: "Seniors' Questions" };
 const out = bank.map((q) => ({
   id: q.id,
   question: q.question,

@@ -6,10 +6,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
 import { AppProvider } from './state/AppContext';
 import type { Question } from './types';
-import { isPlayable } from './lib/exam';
+import { filterPool, isPlayable } from './lib/exam';
 
 const BANK: Question[] = JSON.parse(readFileSync('public/questions.json', 'utf8'));
 const PLAYABLE = BANK.filter(isPlayable);
+const SOURCES = JSON.parse(readFileSync('public/sources.json', 'utf8')) as { id: string; match: string; name: string; titles: string[] }[];
+const LIPP = "Lippincott's 1001";
+const enc = encodeURIComponent;
 
 function mount(path = '/') {
   return render(
@@ -74,7 +77,7 @@ beforeEach(() => {
   localStorage.clear();
   sessionStorage.clear();
   window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
-  vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, status: 200, json: async () => BANK })));
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => ({ ok: true, status: 200, json: async () => (String(url).includes('sources.json') ? SOURCES : BANK) })));
 });
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); });
 
@@ -408,5 +411,95 @@ describe('questions per page', () => {
     cleanup();
     await ready('/exam');
     expect((screen.getByLabelText(/questions per page/i) as HTMLSelectElement).value).toBe('10');
+  });
+});
+
+describe('sources page', () => {
+  const expected = (source: string, topic?: string) => filterPool(BANK, { includeAi: true }).filter((q) => q.source === source && (!topic || q.topic === topic));
+
+  it('lists every source with a first-page picture and is reachable from the menu', async () => {
+    await ready('/sources');
+    await flush();
+    expect(screen.getAllByAltText(/^first page of /i)).toHaveLength(5);
+    for (const s of SOURCES) expect(screen.getByRole('heading', { name: s.name })).toBeTruthy();
+    expect(screen.getAllByRole('link', { name: /^sources$/i }).length).toBeGreaterThan(0);
+    expect(screen.getByText('34 questions', { exact: true })).toBeTruthy(); // the Word document
+  });
+
+  it('tapping the picture lists the chapter titles with counts, and tapping again hides them', async () => {
+    await ready('/sources');
+    await flush();
+    const pic = screen.getByRole('button', { name: /show titles of lippincott/i });
+    expect(pic.getAttribute('aria-expanded')).toBe('false');
+    expect(screen.queryByText(/chapters in this source/i)).toBeNull();
+    await click(pic);
+    expect(screen.getByText(/chapters in this source \(21\)/i)).toBeTruthy();
+    const items = within(screen.getByRole('list')).getAllByRole('listitem');
+    expect(items).toHaveLength(21);
+    const counts = items.map((li) => Number(li.textContent!.match(/\((\d+)\)/)![1]));
+    expect(counts.reduce((a, b) => a + b, 0)).toBe(PLAYABLE.filter((q) => q.source === LIPP).length);
+    await click(screen.getByRole('button', { name: /hide titles of lippincott/i }));
+    expect(screen.queryByText(/chapters in this source/i)).toBeNull();
+  });
+
+  it('a title opens practice limited to exactly that title', async () => {
+    await ready('/sources');
+    await flush();
+    await click(screen.getByRole('button', { name: /show titles of lippincott/i }));
+    await click(screen.getByRole('link', { name: /^practise airway management$/i }));
+    await flush();
+    const want = expected(LIPP, 'Airway Management');
+    expect(want.length).toBeGreaterThan(10);
+    expect(screen.getByText(new RegExp(`question 1 of ${want.length}$`, 'i'))).toBeTruthy();
+    const { q } = current();
+    expect(q.source).toBe(LIPP);
+    expect(q.topic).toBe('Airway Management');
+  });
+
+  it('a source with no titles says so and offers its subjects instead', async () => {
+    await ready('/sources');
+    await flush();
+    await click(screen.getByRole('button', { name: /show titles of ehple/i }));
+    expect(screen.getByText(/has no chapter titles of its own/i)).toBeTruthy();
+    const chip = screen.getAllByRole('link', { name: /^practise .* from ehple/i })[0];
+    expect(chip.getAttribute('href')).toContain('subject=');
+    expect(chip.getAttribute('href')).toContain('source=EHPLE');
+  });
+
+  it('practice can be limited to one source, and the new Word-document questions are usable', async () => {
+    await ready(`/practice?source=${enc("Seniors' Questions")}`);
+    const want = expected("Seniors' Questions");
+    expect(want).toHaveLength(34);
+    expect(screen.getByText(new RegExp(`question 1 of 34$`, 'i'))).toBeTruthy();
+    await clickCorrect();
+    expect(screen.getByText(/correct answer:/i)).toBeTruthy();
+    expect(screen.getByText('Answer from source')).toBeTruthy();
+    expect(current === undefined).toBe(false);
+  });
+
+  it('a mock exam can be built from one source, or from one title of a source', async () => {
+    await ready(`/exam?mode=source&source=${enc("Seniors' Questions")}`);
+    await click(btn(/^all/i));
+    await click(btn(/start exam/i));
+    let ids: string[] = JSON.parse(localStorage.getItem('ame:session')!).questionIds;
+    expect(ids).toHaveLength(34);
+    expect(ids.every((id) => id.startsWith('SEN-'))).toBe(true);
+    cleanup();
+    localStorage.removeItem('ame:session');
+    await ready(`/exam?mode=source&source=${enc(LIPP)}&topic=${enc('Airway Management')}`);
+    await click(btn('20'));
+    await click(btn(/start exam/i));
+    ids = JSON.parse(localStorage.getItem('ame:session')!).questionIds;
+    const byId = new Map(BANK.map((q) => [q.id, q]));
+    expect(ids).toHaveLength(20);
+    expect(ids.every((id) => byId.get(id)!.source === LIPP && byId.get(id)!.topic === 'Airway Management')).toBe(true);
+  });
+
+  it('titles in sources.json match the topics in the question bank exactly', () => {
+    for (const s of SOURCES) {
+      const topics = new Set(BANK.filter((q) => q.source === s.match && q.topic).map((q) => q.topic));
+      expect(new Set(s.titles)).toEqual(topics);
+      expect(BANK.some((q) => q.source === s.match)).toBe(true);
+    }
   });
 });

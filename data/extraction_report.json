@@ -1,5 +1,5 @@
 {
- "total": 2992,
+ "total": 3028,
  "per_file": {
   "A Comprehensive Review 1001.pdf": {
    "extracted": 1001,
@@ -36,12 +36,21 @@
    "without_explanation": 0,
    "needs_manual_review": 4,
    "maybe_figure": 2
+  },
+  "Seniors' Questions (seniors_.docx)": {
+   "extracted": 34,
+   "with_source_answer_key": 34,
+   "without_key": 0,
+   "with_source_explanation": 34,
+   "without_explanation": 0,
+   "needs_manual_review": 1,
+   "maybe_figure": 0
   }
  },
- "with_key_total": 2202,
- "without_key_total": 790,
- "without_explanation_total": 1032,
- "needs_manual_review_total": 97,
+ "with_key_total": 3023,
+ "without_key_total": 5,
+ "without_explanation_total": 17,
+ "needs_manual_review_total": 111,
  "duplicates": {
   "exact": 32,
   "likely": 45,
@@ -157,27 +166,27 @@
   ]
  ],
  "subjects": {
-  "Systemic Diseases and Special Surgeries": 411,
+  "Systemic Diseases and Special Surgeries": 413,
   "Pharmacology": 409,
   "Regional Anesthesia": 242,
   "Cardiovascular Anesthesia and Physiology": 240,
-  "Respiratory Physiology and Critical Care": 228,
+  "Respiratory Physiology and Critical Care": 231,
   "Anesthesia Equipment and Monitoring": 198,
   "Obstetric Anesthesia": 178,
-  "Pediatric Anesthesia": 172,
-  "Neuroanesthesia": 159,
+  "Pediatric Anesthesia": 175,
+  "Neuroanesthesia": 165,
   "General Anesthesia": 158,
-  "Fluid, Electrolyte, Acid-Base and Blood Transfusion": 140,
-  "Preoperative Evaluation": 110,
-  "Airway Management": 78,
+  "Fluid, Electrolyte, Acid-Base and Blood Transfusion": 141,
+  "Preoperative Evaluation": 111,
+  "Airway Management": 79,
   "Pain Management": 69,
-  "Postoperative Care and Complications": 57,
-  "Thoracic Anesthesia": 43,
+  "Postoperative Care and Complications": 59,
+  "Thoracic Anesthesia": 45,
+  "Research Methodology and Biostatistics": 33,
   "Other": 31,
-  "Research Methodology and Biostatistics": 30,
-  "Ethics and Professional Practice": 18,
-  "Management, Leadership and Health Systems": 15,
-  "Public Health and Community Health": 8
+  "Ethics and Professional Practice": 21,
+  "Management, Leadership and Health Systems": 19,
+  "Public Health and Community Health": 11
  },
  "flag_counts": {
   "maybe_figure": 82,
@@ -259,10 +268,10 @@
    "EHPLE-138",
    "EHPLE-154"
   ],
-  "total_questions": 2994
+  "total_questions": 3028
  },
  "verification_status_counts": {
-  "source_key_verified": 2173,
+  "source_key_verified": 2207,
   "source_key_needs_review": 29,
   "unverified_no_key": 5,
   "ai_answer_unverified": 787

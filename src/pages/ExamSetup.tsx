@@ -11,6 +11,7 @@ const PER_PAGE = [1, 2, 3, 5, 10, 20];
 const MODES: { id: ExamMode; label: string; hint: string }[] = [
   { id: 'random', label: 'Random mix', hint: 'Questions drawn from every subject' },
   { id: 'subject', label: 'One subject', hint: 'Exam on a single subject' },
+  { id: 'source', label: 'By source', hint: 'One book, or one of its chapters' },
   { id: 'wrong', label: 'My wrong answers', hint: 'Questions you last got wrong' },
   { id: 'bookmarks', label: 'Bookmarks', hint: 'Questions you saved' },
 ];
@@ -22,16 +23,21 @@ export default function ExamSetup() {
   const initialMode = (params.get('mode') as ExamMode) || 'random';
   const [mode, setMode] = useState<ExamMode>(MODES.some((m) => m.id === initialMode) ? initialMode : 'random');
   const [subject, setSubject] = useState(params.get('subject') || subjects[0] || '');
+  const sources = useMemo(() => [...new Set(playable.map((q) => q.source))], [playable]);
+  const [source, setSource] = useState(params.get('source') || sources[0] || '');
+  const [topic, setTopic] = useState(params.get('topic') || '');
   const [count, setCount] = useState<number | 'all'>(50);
   const [minutes, setMinutes] = useState<number | null>(null);
 
   const pool = useMemo(() => {
     const base = { includeAi: settings.includeAi, hiddenIds };
     if (mode === 'subject') return filterPool(questions, { ...base, subjects: [subject] });
+    if (mode === 'source') return filterPool(questions, base).filter((q) => q.source === source && (!topic || q.topic === topic));
     if (mode === 'wrong') return filterPool(questions, { ...base, ids: latestWrong(log) });
     if (mode === 'bookmarks') return filterPool(questions, { ...base, ids: bookmarks });
     return filterPool(questions, base);
-  }, [questions, mode, subject, settings.includeAi, log, bookmarks, hiddenIds]);
+  }, [questions, mode, subject, source, topic, settings.includeAi, log, bookmarks, hiddenIds]);
+  const titles = useMemo(() => [...new Set(playable.filter((q) => q.source === source && q.topic).map((q) => q.topic as string))].sort(), [playable, source]);
 
   const effective = count === 'all' ? pool.length : Math.min(count, pool.length);
   const suggested = Math.max(1, Math.ceil(effective * 1.2));
@@ -39,7 +45,7 @@ export default function ExamSetup() {
   const active = session && remainingMs(session) > 0 ? session : null;
 
   const start = () => {
-    const title = mode === 'subject' ? `${subject} exam` : mode === 'wrong' ? 'Wrong answers exam' : mode === 'bookmarks' ? 'Bookmarked questions exam' : 'Random mock exam';
+    const title = mode === 'subject' ? `${subject} exam` : mode === 'source' ? `${source}${topic ? ` – ${topic}` : ''} exam` : mode === 'wrong' ? 'Wrong answers exam' : mode === 'bookmarks' ? 'Bookmarked questions exam' : 'Random mock exam';
     saveSession(buildSession({ mode, title, subject: mode === 'subject' ? subject : undefined, count, durationSec: Math.round(mins * 60), pool, perPage: settings.perPage }));
     nav('/exam/run');
   };
@@ -61,7 +67,7 @@ export default function ExamSetup() {
       <div className="card space-y-6 p-5">
         <div>
           <span className="label">Exam type</span>
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
             {MODES.map((m) => (
               <button key={m.id} onClick={() => setMode(m.id)} className={`rounded-lg border p-3 text-left transition ${mode === m.id ? 'border-teal-500 bg-teal-50 dark:bg-teal-950/40' : 'border-slate-200 hover:bg-slate-50 dark:border-navy-800 dark:hover:bg-navy-800'}`} aria-pressed={mode === m.id}>
                 <span className="block text-sm font-bold text-navy-800 dark:text-white">{m.label}</span>
@@ -75,6 +81,22 @@ export default function ExamSetup() {
           <Select label="Subject" value={subject} onChange={setSubject}>
             {subjects.map((s) => <option key={s}>{s}</option>)}
           </Select>
+        )}
+
+        {mode === 'source' && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Select label="Source" value={source} onChange={(v) => { setSource(v); setTopic(''); }}>
+              {sources.map((n) => <option key={n}>{n}</option>)}
+            </Select>
+            {titles.length > 0 ? (
+              <Select label="Title / chapter" value={topic} onChange={setTopic}>
+                <option value="">All titles</option>
+                {titles.map((t) => <option key={t}>{t}</option>)}
+              </Select>
+            ) : (
+              <p className="self-end pb-2 text-sm text-slate-500">This source has no titles of its own, so the exam uses all of its questions.</p>
+            )}
+          </div>
         )}
 
         <div>

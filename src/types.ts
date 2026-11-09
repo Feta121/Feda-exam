@@ -37,7 +37,7 @@ export interface QuestionOverride {
   updatedAt: number;
 }
 
-export type ExamMode = 'mock' | 'random' | 'subject' | 'wrong' | 'bookmarks';
+export type ExamMode = 'mock' | 'random' | 'subject' | 'source' | 'wrong' | 'bookmarks';
 
 export interface ExamSession {
   id: string;
@@ -98,4 +98,21 @@ export interface Settings {
   passMark: number;
   includeAi: boolean;
   perPage: number;
+}
+
+/** One entry of public/sources.json: a book or document the questions were taken from. */
+export interface SourceMeta {
+  id: string;
+  /** Exactly the value of Question.source for this source. */
+  match: string;
+  name: string;
+  byline: string;
+  kind: string;
+  pages: number;
+  cover: string;
+  about: string;
+  /** What the source calls its titles (for example "Chapters"), or null when it has none. */
+  titleLabel: string | null;
+  /** Titles in the order they appear in the source. They equal Question.topic values. */
+  titles: string[];
 }
