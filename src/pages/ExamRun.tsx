@@ -125,23 +125,23 @@ export default function ExamRun() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-navy-950">
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white dark:border-navy-800 dark:bg-navy-900">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5">
-          <div className="flex min-w-0 items-center gap-2">
-            <Logo className="h-8 w-8 shrink-0" />
-            <div className="min-w-0 leading-tight">
-              <p className="truncate text-sm font-bold text-navy-900 dark:text-white">{session.title}</p>
-              <p className="text-xs text-slate-500">
-                {perPage === 1 ? `Question ${start + 1} of ${total}` : `Questions ${start + 1}–${end} of ${total}`} · {counts.answered} answered
-              </p>
-            </div>
+        {/* Phone: row 1 = logo + title | timer, row 2 = progress | buttons. Larger screens: title/progress on the left, timer and buttons on the right.
+            Every piece is single-line (nowrap/truncate) so text can never break into a vertical column. */}
+        <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1.5 px-3 py-2 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:gap-x-3 sm:px-4 sm:py-2.5">
+          <div className="col-start-1 row-start-1 flex min-w-0 items-center gap-2">
+            <Logo className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" />
+            <p className="truncate text-sm font-bold text-navy-900 dark:text-white">{session.title}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <div role="timer" aria-live="off" className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-base font-bold tabular-nums ${urgent ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200' : 'bg-slate-100 text-navy-800 dark:bg-navy-800 dark:text-white'}`}>
-              <IconClock className="h-4 w-4" />
-              {formatClock(left)}
-            </div>
-            <button className="btn-ghost lg:hidden" onClick={() => setPanel(true)}>Questions</button>
-            <button className="btn-primary" onClick={() => setConfirm(true)}>Submit</button>
+          <p className="col-start-1 row-start-2 truncate whitespace-nowrap text-[11px] text-slate-500 sm:pl-10 sm:text-xs">
+            {perPage === 1 ? `Question ${start + 1} of ${total}` : `Questions ${start + 1}–${end} of ${total}`} · {counts.answered} answered
+          </p>
+          <div role="timer" aria-live="off" className={`col-start-2 row-start-1 flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1 font-mono text-sm font-bold tabular-nums sm:col-start-2 sm:row-span-2 sm:px-3 sm:py-1.5 sm:text-base ${urgent ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200' : 'bg-slate-100 text-navy-800 dark:bg-navy-800 dark:text-white'}`}>
+            <IconClock className="h-4 w-4" />
+            {formatClock(left)}
+          </div>
+          <div className="col-start-2 row-start-2 flex shrink-0 items-center gap-1.5 sm:col-start-3 sm:row-span-2 sm:row-start-1 sm:gap-2">
+            <button className="btn-ghost whitespace-nowrap !px-2.5 !py-1.5 !text-xs sm:!px-4 sm:!text-sm lg:hidden" onClick={() => setPanel(true)}>Questions</button>
+            <button className="btn-primary whitespace-nowrap !px-3.5 !py-1.5 !text-xs sm:!px-4 sm:!text-sm" onClick={() => setConfirm(true)}>Submit</button>
           </div>
         </div>
       </header>

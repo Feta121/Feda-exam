@@ -30,20 +30,29 @@ async function ready(path = '/') {
 const click = (el: HTMLElement) => act(async () => { fireEvent.click(el); });
 const btn = (name: RegExp | string) => screen.getByRole('button', { name });
 
+const strip = (t: string) => t.replace(/^[A-H]\.\s*/, '').trim();
+/** Identify a displayed question by its stem AND its option texts (several bank questions share the same opening words). */
+function identify(stem: string, opts: HTMLElement[]): Question {
+  const shown = opts.map((o) => strip(o.textContent!));
+  const cands = BANK.filter((x) => stem.includes(x.question.trim().slice(0, 60)));
+  const exact = cands.find((x) => stem.endsWith(x.question.trim()) && shown.every((t) => Object.values(x.options).some((v) => v.trim() === t)));
+  const loose = cands.find((x) => shown.every((t) => Object.values(x.options).some((v) => v.trim() === t)));
+  const q = exact ?? loose ?? cands[0];
+  if (!q) throw new Error('question on screen not found in bank: ' + stem.slice(0, 80));
+  return q;
+}
+
 /** Finds the question currently on screen and returns it with the displayed option buttons. */
 function current(): { q: Question; opts: HTMLElement[] } {
   const radios = screen.getAllByRole('radio');
   const stem = radios[0].closest('div[role="radiogroup"]')!.parentElement!.querySelector('p.font-serif')!.textContent!;
-  const q = BANK.find((x) => stem.endsWith(x.question.trim()) || stem.includes(x.question.trim().slice(0, 60)));
-  if (!q) throw new Error('question on screen not found in bank: ' + stem.slice(0, 80));
-  return { q, opts: radios };
+  return { q: identify(stem, radios), opts: radios };
 }
 function pageQuestions(): { q: Question; opts: HTMLElement[] }[] {
   return screen.getAllByRole('radiogroup').map((g) => {
     const stem = g.parentElement!.querySelector('p.font-serif')!.textContent!;
-    const q = BANK.find((x) => stem.includes(x.question.trim().slice(0, 60)));
-    if (!q) throw new Error('question on screen not found in bank: ' + stem.slice(0, 80));
-    return { q, opts: within(g as HTMLElement).getAllByRole('radio') };
+    const opts = within(g as HTMLElement).getAllByRole('radio');
+    return { q: identify(stem, opts), opts };
   });
 }
 const textOf = (o: HTMLElement) => o.textContent!.replace(/^[A-H]\.\s*/, '').trim();
@@ -68,6 +77,16 @@ beforeEach(() => {
   vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, status: 200, json: async () => BANK })));
 });
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); });
+
+describe('loading screen', () => {
+  it('shows the full logo picture while the question bank is downloading', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => new Promise(() => undefined))); // never resolves
+    mount('/');
+    await flush();
+    expect(screen.getByAltText(/anesthesia mock exam by abdulfetah/i).getAttribute('src')).toContain('brand.png');
+    expect(screen.getByText(/loading question bank/i)).toBeTruthy();
+  });
+});
 
 describe('dashboard', () => {
   it('shows real totals from the question bank', async () => {
@@ -292,6 +311,20 @@ describe('administration', () => {
   it('students cannot reach the editor without unlocking', async () => {
     await ready('/admin');
     expect(screen.queryByRole('button', { name: /add question/i })).toBeNull();
+  });
+});
+
+describe('exam header on a phone', () => {
+  it('keeps every header item on a single line so text cannot scatter into a column', async () => {
+    await startExam(20, undefined, 5);
+    const header = document.querySelector('header')!;
+    const progress = within(header).getByText(/questions 1–5 of 20 · 0 answered/i);
+    expect(progress.className).toMatch(/truncate/);
+    expect(progress.className).toMatch(/whitespace-nowrap/);
+    expect(btn(/^submit$/i).className).toMatch(/whitespace-nowrap/);
+    expect(btn(/^questions$/i).className).toMatch(/whitespace-nowrap/);
+    expect(screen.getByRole('timer').className).toMatch(/whitespace-nowrap/);
+    expect(within(header).getByText(/random mock exam/i).className).toMatch(/truncate/);
   });
 });
 

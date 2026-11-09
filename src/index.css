@@ -20,3 +20,12 @@
   .label { @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400; }
   .chip { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold; }
 }
+
+@keyframes ame-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+.loading-bar { animation: ame-slide 1.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .loading-bar { animation: none; width: 100%; opacity: 0.5; }
+}

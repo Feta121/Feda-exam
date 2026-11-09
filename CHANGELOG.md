@@ -7,3 +7,8 @@
 
 ## Round 2 corrections
 - Practice mode: the Next question (or Skip) button moved from under the explanation to a bar pinned at the top of the question, so it stays in view while scrolling. Enter or the right arrow also moves on once an answer is shown, and the page returns to the new question automatically.
+
+## Round 3 corrections
+- Exam page header on phones: two tidy rows (logo + title + timer, then progress + Questions/Submit); nothing wraps into a vertical column.
+- Light theme is now the default on every device; dark is used only after the student switches to it.
+- The full logo picture now appears on the loading screens (instant splash before the app loads, and the "Loading question bank" screen).

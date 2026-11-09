@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
+import LoadingScreen from './components/LoadingScreen';
 import { useApp } from './state/AppContext';
 import Dashboard from './pages/Dashboard';
 import ExamSetup from './pages/ExamSetup';
@@ -14,7 +15,7 @@ import Admin from './pages/Admin';
 
 export default function App() {
   const { loading, error } = useApp();
-  if (loading) return <div className="grid min-h-screen place-items-center text-sm text-slate-500">Loading question bank…</div>;
+  if (loading) return <LoadingScreen />;
   if (error)
     return (
       <div className="grid min-h-screen place-items-center p-6">
