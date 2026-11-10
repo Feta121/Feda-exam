@@ -1,34 +1,12 @@
-# Update: seniors' questions + Sources page (24 files)
+# Update: Sources page layout on phones (3 files)
 
-Every file sits in the same folder path as in your GitHub repo. Uploading replaces the old copy (or adds the new file), then Vercel republishes by itself.
-
-## Fastest way (one go)
 1. Unzip this update.
-2. Go to your repository's FRONT PAGE on github.com (not inside any folder).
-3. Add file -> Upload files.
-4. Open the unzipped folder, select everything inside it (CHANGELOG.md, README.md, and the folders data, pipeline, public, scripts, src) and drag it all in at once.
-   Leave out HOW-TO-APPLY.md if you like (it is only these instructions).
-5. Commit changes. Open the commit afterwards: it should list 24 files (about 8 MB, the biggest is data/question_bank.json at 4.5 MB, well inside GitHub's limits).
-6. In Vercel -> your project -> Deployments, wait for "Ready" (about a minute), then reload feda-quali-prep.vercel.app.
-   If the old version still shows, close the tab and reopen it, or clear the site data for that address.
+2. On your GitHub repository's FRONT PAGE: Add file -> Upload files.
+3. Select everything inside the unzipped folder (the CHANGELOG.md file and the `src` folder) and drag it in once. Commit.
+4. Vercel -> Deployments: wait for "Ready", then reload the site (close and reopen the tab on your phone if it still shows the old layout).
 
-## What is in it
 | File | What changed |
 |------|--------------|
-| public/questions.json | Question bank now includes the 34 new questions (SEN-001..SEN-034) |
-| public/sources.json | NEW: the list of sources, their descriptions and titles for the Sources page |
-| public/sources/*.jpg | NEW: the first-page picture of each of the 5 sources |
-| public/extraction_report.json, data/extraction_report.json | Updated counts |
-| data/question_bank.json | Full bank including the new questions (used only when rebuilding) |
-| src/pages/Sources.tsx | NEW: the Sources page |
-| src/pages/Practice.tsx | New Source filter |
-| src/pages/ExamSetup.tsx | New "By source" exam type |
-| src/pages/History.tsx | Shows "Source" as an exam type |
-| src/App.tsx, src/components/Layout.tsx, src/components/icons.tsx | New menu item and route for Sources |
-| src/types.ts | New types for sources and the source exam type |
-| src/app.test.tsx | 13 new tests (optional, not used by the website) |
-| scripts/build-questions.mjs | Knows the new source |
-| pipeline/add_seniors.py, pipeline/build_sources.py | NEW: the scripts used to add the questions and build the sources list (optional) |
-| CHANGELOG.md, README.md | Notes |
-
-Nothing needs changing in Vercel's settings. Your logo files are unchanged.
+| src/pages/Sources.tsx | On phones, the description and the three buttons span the full card under the picture. Wide screens look the same as before. |
+| src/app.test.tsx | One new test for this layout (optional, not used by the website) |
+| CHANGELOG.md | Notes |

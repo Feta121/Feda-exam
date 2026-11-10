@@ -17,3 +17,6 @@
 - Added 34 questions from seniors_.docx (ids SEN-001 to SEN-034) as a new source, "Seniors' Questions". Their answers and explanations are the ones written in the document. No duplicates of existing questions were found.
 - New Sources page: each source has its first-page picture, a description, counts, and practise / mock-exam buttons. Tapping the picture lists the titles inside it (chapters for the two books that have them) with a Practise button for each title.
 - Practice has a new Source filter, and the mock exam setup has a new "By source" type (a whole source, or one of its titles).
+
+## Round 5 corrections
+- Sources page on phones: the description and the Practise all / Mock exam / Show titles buttons now use the full card width under the picture, instead of staying squeezed beside it. Wide screens are unchanged.

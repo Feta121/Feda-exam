@@ -426,6 +426,20 @@ describe('sources page', () => {
     expect(screen.getByText('34 questions', { exact: true })).toBeTruthy(); // the Word document
   });
 
+  it('on a phone the description and buttons span the full card, under the picture (and sit beside it on wide screens)', async () => {
+    await ready('/sources');
+    await flush();
+    for (const src of SOURCES) {
+      const body = screen.getByTestId(`body-${src.id}`);
+      expect(body.className).toMatch(/\bcol-span-2\b/); // full width on phones
+      expect(body.className).toMatch(/\bsm:col-span-1\b/); // back beside the picture from the sm breakpoint
+      expect(body.className).toMatch(/\bsm:col-start-2\b/);
+      expect(within(body).getByRole('link', { name: /^practise all$/i })).toBeTruthy();
+      expect(within(body).getByRole('link', { name: /^mock exam$/i })).toBeTruthy();
+      expect(within(body).getByRole('button', { name: /^show titles$/i })).toBeTruthy();
+    }
+  });
+
   it('tapping the picture lists the chapter titles with counts, and tapping again hides them', async () => {
     await ready('/sources');
     await flush();

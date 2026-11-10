@@ -65,20 +65,22 @@ export default function Sources() {
           const subjects = [...st.subjects.entries()].sort((a, b) => b[1] - a[1]);
           return (
             <section key={s.id} className="card p-4 sm:p-5" aria-labelledby={`name-${s.id}`}>
-              <div className="grid grid-cols-[104px_minmax(0,1fr)] gap-3 sm:grid-cols-[168px_minmax(0,1fr)] sm:gap-5">
+              {/* Phone: picture + title/chips on the first row, then the description and buttons use the FULL card width underneath.
+                  From the sm breakpoint up: the picture stays on the left and everything else sits beside it. */}
+              <div className="grid grid-cols-[104px_minmax(0,1fr)] gap-x-3 gap-y-3 sm:grid-cols-[168px_minmax(0,1fr)] sm:grid-rows-[auto_1fr] sm:gap-x-5 sm:gap-y-0">
                 <button
                   type="button"
                   onClick={() => toggle(s.id)}
                   aria-expanded={isOpen}
                   aria-controls={panelId}
                   aria-label={`${isOpen ? 'Hide' : 'Show'} titles of ${s.name}`}
-                  className="group relative block self-start overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:border-navy-700"
+                  className="group relative col-start-1 row-start-1 block self-start overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 dark:border-navy-700 sm:row-span-2"
                 >
                   <img src={`${import.meta.env.BASE_URL}${s.cover}`} alt={`First page of ${s.name}`} loading="lazy" className="block h-auto w-full" />
                   <span className="absolute inset-x-0 bottom-0 bg-navy-900/85 px-1 py-1.5 text-center text-[11px] font-semibold text-white sm:text-xs">{isOpen ? 'Hide titles' : 'Tap to see titles'}</span>
                 </button>
 
-                <div className="min-w-0">
+                <div className="col-start-2 row-start-1 min-w-0">
                   <h2 id={`name-${s.id}`} className="text-base font-bold leading-snug text-navy-900 dark:text-white sm:text-lg">{s.name}</h2>
                   <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{s.byline}</p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
@@ -87,11 +89,14 @@ export default function Sources() {
                     {hasTitles && <span className="chip bg-slate-100 text-slate-600 dark:bg-navy-800 dark:text-slate-300">{s.titles.length} {s.titleLabel?.toLowerCase() ?? 'titles'}</span>}
                     {st.ai > 0 ? <span className="chip bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">{st.ai.toLocaleString()} AI-generated answers</span> : <span className="chip bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-200">Answers from the source</span>}
                   </div>
-                  <p className="mt-2.5 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{s.about}</p>
+                </div>
+
+                <div data-testid={`body-${s.id}`} className="col-span-2 row-start-2 min-w-0 sm:col-span-1 sm:col-start-2 sm:mt-2.5">
+                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{s.about}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <Link to={practiceAll} className="btn-primary !px-3 !py-1.5">Practise all</Link>
-                    <Link to={examAll} className="btn-ghost !px-3 !py-1.5">Mock exam</Link>
-                    <button type="button" className="btn-ghost !px-3 !py-1.5" onClick={() => toggle(s.id)} aria-expanded={isOpen} aria-controls={panelId}>{isOpen ? 'Hide titles' : 'Show titles'}</button>
+                    <Link to={practiceAll} className="btn-primary flex-1 !px-3 !py-1.5 sm:flex-none">Practise all</Link>
+                    <Link to={examAll} className="btn-ghost flex-1 !px-3 !py-1.5 sm:flex-none">Mock exam</Link>
+                    <button type="button" className="btn-ghost flex-1 !px-3 !py-1.5 sm:flex-none" onClick={() => toggle(s.id)} aria-expanded={isOpen} aria-controls={panelId}>{isOpen ? 'Hide titles' : 'Show titles'}</button>
                   </div>
                 </div>
               </div>
