@@ -20,3 +20,9 @@
 
 ## Round 5 corrections
 - Sources page on phones: the description and the Practise all / Mock exam / Show titles buttons now use the full card width under the picture, instead of staying squeezed beside it. Wide screens are unchanged.
+
+## Round 6 corrections
+- Shared cases: 20 groups of questions in Lippincott's (chapters 14, 16 and 17; 65 questions) that share a case ("Questions 55 to 58: A 30-year-old ...") now carry that case with every question. It appears above the question wherever it is shown (exam, practice, results review), so it still makes sense when the questions are shuffled or only some of them appear.
+- The case text had been stuck to the end of the previous question's last answer option; it was separated out and the options cleaned. Stray "Directions" fragments in three Comprehensive Review options were removed.
+- The gestational age in the questions 55-58 case now reads 34¹ weeks as printed in the book (the PDF text had flattened it to "341").
+- Admin: the question editor has a "Shared case" box, and the search also looks inside cases.

@@ -517,3 +517,97 @@ describe('sources page', () => {
     }
   });
 });
+
+describe('shared cases ("Questions 55 to 58: A 30-year-old ...")', () => {
+  const CASE_IDS = ['LIPP-17-55', 'LIPP-17-56', 'LIPP-17-57', 'LIPP-17-58'];
+  const CASE = BANK.find((q) => q.id === 'LIPP-17-55')!.context!;
+  const above = (a: Element, b: Element) => !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+  function seed(ids: string[], perPage = 5) {
+    const now = Date.now();
+    const byId = new Map(BANK.map((q) => [q.id, q]));
+    localStorage.setItem('ame:session', JSON.stringify({ id: 'exam-seeded', mode: 'mock', title: 'Case test', createdAt: now, endsAt: now + 3_600_000, durationSec: 3600, questionIds: ids, perPage, optionOrder: Object.fromEntries(ids.map((id) => [id, Object.keys(byId.get(id)!.options).sort()])), answers: {}, flagged: [], index: 0 }));
+  }
+
+  it('the data: 20 groups, 65 questions, every member carries the identical case, nothing left in the options', () => {
+    const withCtx = BANK.filter((q) => q.context);
+    expect(withCtx).toHaveLength(65);
+    const groups = new Map<string, Question[]>();
+    for (const q of withCtx) groups.set(q.context!, [...(groups.get(q.context!) ?? []), q]);
+    expect(groups.size).toBe(20);
+    for (const members of groups.values()) {
+      const nums = members.map((q) => Number(q.id.split('-')[2])).sort((a, b) => a - b);
+      expect(new Set(members.map((q) => q.id.split('-')[1])).size).toBe(1); // same chapter
+      expect(nums.every((n, i) => i === 0 || n === nums[i - 1] + 1)).toBe(true); // consecutive questions
+      expect(members[0].context!.length).toBeGreaterThan(100);
+    }
+    const marker = /Questions?\s+\d+\s*(to|through|-|–|and)\s*\d+/i;
+    for (const q of BANK) for (const t of [q.question, ...Object.values(q.options)]) expect(marker.test(t)).toBe(false);
+    expect(CASE).toMatch(/^A 30-year-old otherwise-healthy G2P0 \(167 cm, 68 kg\) presents at 34¹ weeks/);
+    expect(CASE_IDS.every((id) => BANK.find((q) => q.id === id)!.context === CASE)).toBe(true);
+    expect(BANK.find((q) => q.id === 'LIPP-17-54')!.options.D).toBe('Induces severe hypertension'); // the question before the group is clean
+  });
+
+  it('every question of the case shows the case above it, wherever it lands after shuffling, and others show none', async () => {
+    seed(['LIPP-17-57', 'EHPLE-001', 'LIPP-17-55', 'LIPP-17-58', 'LIPP-17-56']);
+    await ready('/exam/run');
+    const boxes = [...document.querySelectorAll('blockquote')];
+    expect(boxes).toHaveLength(4);
+    for (const b of boxes) {
+      expect(b.textContent).toContain(CASE);
+      expect(above(b, b.closest('section')!.querySelector('[role="radiogroup"]')!)).toBe(true);
+    }
+    expect(document.getElementById('q-1')!.querySelector('blockquote')).toBeNull(); // EHPLE-001 has no case
+  });
+
+  it('a question that appears alone still brings its case with it', async () => {
+    seed(['LIPP-17-57'], 1);
+    await ready('/exam/run');
+    expect(document.querySelectorAll('blockquote')).toHaveLength(1);
+    expect(screen.getByText('Case for this question')).toBeTruthy();
+    expect(document.querySelector('blockquote')!.textContent).toContain('single footling in breech presentation');
+  });
+
+  it('the results review shows the case with each question', async () => {
+    seed(CASE_IDS, 5);
+    await ready('/exam/run');
+    await click(btn(/^submit$/i));
+    await click(btn(/submit now/i));
+    await flush();
+    const boxes = [...document.querySelectorAll('blockquote')];
+    expect(boxes).toHaveLength(4);
+    expect(boxes.every((b) => b.textContent!.includes(CASE))).toBe(true);
+  });
+
+  it('practice shows the case above the question', async () => {
+    await ready(`/practice?source=${enc(LIPP)}&topic=${enc('Obstetric Anesthesia')}`);
+    let bq: Element | null = null;
+    for (let i = 0; i < 90 && !(bq = document.querySelector('blockquote')); i++) {
+      await clickCorrect();
+      await click(btn(/next question|finish/i));
+    }
+    expect(bq).toBeTruthy();
+    const { q } = current();
+    expect(q.context).toBeTruthy();
+    expect(bq!.textContent).toContain(q.context!);
+    expect(above(bq!, screen.getByRole('radiogroup'))).toBe(true);
+  });
+
+  it('an administrator can edit the shared case of a question', async () => {
+    await ready('/admin');
+    fireEvent.change(screen.getByLabelText(/admin passcode/i), { target: { value: 'admin' } });
+    await click(btn(/sign in/i));
+    fireEvent.change(screen.getAllByRole('combobox')[0], { target: { value: 'all' } });
+    fireEvent.change(screen.getByPlaceholderText('ID or text'), { target: { value: 'single footling' } });
+    expect(screen.getByText('LIPP-17-57')).toBeTruthy(); // found only through its case: its own text does not contain the words
+    fireEvent.change(screen.getByPlaceholderText('ID or text'), { target: { value: 'LIPP-17-55' } });
+    await click(screen.getAllByRole('button', { name: /^edit$/i })[0]);
+    const dialog = screen.getByRole('dialog');
+    const box = within(dialog).getByLabelText(/shared case/i) as HTMLTextAreaElement;
+    expect(box.value).toContain('G2P0');
+    fireEvent.change(box, { target: { value: box.value + ' EDITED' } });
+    await click(within(dialog).getByRole('button', { name: /^save$/i }));
+    const saved = Object.values(JSON.parse(localStorage.getItem('ame:overrides')!)) as { context: string }[];
+    expect(saved).toHaveLength(1);
+    expect(saved[0].context).toMatch(/G2P0.*EDITED$/);
+  });
+});

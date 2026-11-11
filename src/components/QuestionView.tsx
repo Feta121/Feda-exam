@@ -23,6 +23,12 @@ export default function QuestionView({ q, order, selected, onSelect, reveal = fa
     <div>
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
+          {q.context && (
+            <blockquote className="mb-3 rounded-md border-l-4 border-teal-500 bg-teal-50/70 px-4 py-3 text-sm leading-relaxed text-slate-700 dark:bg-teal-950/30 dark:text-slate-300">
+              <span className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-teal-700 dark:text-teal-300">Case for this question</span>
+              {q.context}
+            </blockquote>
+          )}
           {q.directions && <p className="mb-2 rounded-md bg-navy-50 px-3 py-2 text-xs text-navy-700 dark:bg-navy-800 dark:text-navy-200">{q.directions}</p>}
           <p className="font-serif text-[1.15rem] leading-relaxed text-slate-900 dark:text-slate-100">
             {number !== undefined && <span className="mr-2 font-sans text-sm font-bold text-teal-600 dark:text-teal-400">{number}.</span>}

@@ -19,6 +19,7 @@ const out = bank.map((q) => ({
   duplicateOf: (q.duplicate_of || []).slice(0, 5).map((d) => d.id),
   flags: q.flags || [],
   directions: q.group ? q.group.directions : null,
+  context: q.context || null,
   aiConfidence: q.ai_confidence || null,
   review: !!q.needs_manual_review,
 }));

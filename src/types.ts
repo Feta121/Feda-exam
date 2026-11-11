@@ -17,6 +17,8 @@ export interface Question {
   duplicateOf: string[];
   flags: string[];
   directions: string | null;
+  /** Shared case text (e.g. "Questions 55 to 58: A 30-year-old ...") shown above every question that belongs to the case. */
+  context: string | null;
   aiConfidence: 'High' | 'Medium' | 'Low' | null;
   review: boolean;
 }
@@ -30,6 +32,7 @@ export interface QuestionOverride {
   explanation?: string | null;
   subject?: string;
   topic?: string | null;
+  context?: string | null;
   hidden?: boolean;
   verified?: boolean;
   /** Present when an administrator added a brand-new question (or imported one). */

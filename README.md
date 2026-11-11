@@ -21,6 +21,8 @@ answers or bookmarks) · Practice where clicking an option shows the result stra
 wrong answers · Exam history with full review and "repeat this exam" · Admin (edit, add, hide, import, export,
 duplicate review, extraction report) · light and dark theme · desktop sidebar and mobile bottom navigation.
 
+Questions that belong to a shared case (for example "Questions 55 to 58: A 30-year-old ...") show that case above each of their questions, so they stay meaningful when shuffled.
+
 Exam rules: 5 questions per page by default (you can pick 1, 2, 3, 5, 10 or 20 on the setup screen), navigator with answered / unanswered / flagged states, countdown that is
 computed from a fixed end time (a reload cannot reset it), automatic submission at zero (also if the page is
 reopened after time has run out), confirmation before manual submission, answers and explanations hidden until

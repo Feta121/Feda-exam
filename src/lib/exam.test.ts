@@ -7,7 +7,7 @@ function q(id: string, over: Partial<Question> = {}): Question {
   return {
     id, question: `Question ${id}?`, options: { A: 'one', B: 'two', C: 'three', D: 'four' }, answer: 'B', explanation: 'because',
     explanationOrigin: 'source', answerOrigin: 'source', subject: 'Pharmacology', topic: null, source: 'T', sourceNumber: id,
-    status: 'source_key_verified', duplicate: 'none', duplicateOf: [], flags: [], directions: null, aiConfidence: null, review: false, ...over,
+    status: 'source_key_verified', duplicate: 'none', duplicateOf: [], flags: [], directions: null, context: null, aiConfidence: null, review: false, ...over,
   };
 }
 const bank = Array.from({ length: 60 }, (_, i) => q(`Q${i}`, { subject: i % 2 ? 'Airway Management' : 'Pharmacology' }));

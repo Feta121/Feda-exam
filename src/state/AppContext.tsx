@@ -46,7 +46,7 @@ function customQuestion(o: QuestionOverride): Question {
     id: o.id, question: o.question ?? '', options: o.options ?? {}, answer: o.answer ?? null, explanation: o.explanation ?? null,
     explanationOrigin: o.explanation ? 'admin' : null, answerOrigin: 'admin', subject: o.subject || 'Other', topic: o.topic ?? null,
     source: 'Added by administrator', sourceNumber: o.id.replace('CUSTOM-', ''), status: o.verified ? 'admin_verified' : 'admin_added', duplicate: 'none',
-    duplicateOf: [], flags: [], directions: null, aiConfidence: null, review: !o.verified,
+    duplicateOf: [], flags: [], directions: null, context: o.context ?? null, aiConfidence: null, review: !o.verified,
   };
 }
 
@@ -69,6 +69,7 @@ function applyOverrides(base: Question[], ov: Record<string, QuestionOverride>):
     if (o.answer !== undefined && !o.verified && next.status !== 'admin_verified') next.status = 'admin_edited';
     if (o.subject) next.subject = o.subject;
     if (o.topic !== undefined) next.topic = o.topic;
+    if (o.context !== undefined) next.context = o.context;
     if (o.verified) {
       next.status = 'admin_verified';
       next.review = false;

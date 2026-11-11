@@ -64,6 +64,7 @@ function Editor({ q, onClose }: { q: Question | null; onClose: () => void }) {
   const [expl, setExpl] = useState(q?.explanation ?? '');
   const [subject, setSubject] = useState(q?.subject ?? subjects[0] ?? 'Other');
   const [topic, setTopic] = useState(q?.topic ?? '');
+  const [ctx, setCtx] = useState(q?.context ?? '');
   const [hidden, setHidden] = useState(!!(q && overrides[q.id]?.hidden));
   const [verified, setVerified] = useState(isNew || q?.status === 'admin_verified');
   const [err, setErr] = useState<string | null>(null);
@@ -75,7 +76,7 @@ function Editor({ q, onClose }: { q: Question | null; onClose: () => void }) {
     if (!answer || !(answer in options)) return setErr('Choose the correct answer from the options above');
     const o: QuestionOverride = {
       id: q?.id ?? `CUSTOM-${Date.now().toString(36)}`, question: text.trim(), options, answer, explanation: expl.trim() || null,
-      subject, topic: topic.trim() || null, hidden, verified, custom: isNew || q?.id.startsWith('CUSTOM-') || undefined, updatedAt: Date.now(),
+      subject, topic: topic.trim() || null, context: ctx.trim() || null, hidden, verified, custom: isNew || q?.id.startsWith('CUSTOM-') || undefined, updatedAt: Date.now(),
     };
     try {
       await saveOverride(o);
@@ -87,6 +88,7 @@ function Editor({ q, onClose }: { q: Question | null; onClose: () => void }) {
   return (
     <Modal open onClose={onClose} title={isNew ? 'Add question' : `Edit ${q!.id}`}>
       <div className="space-y-3">
+        <label className="block"><span className="label">Shared case (shown above the question; leave empty if there is none)</span><textarea className="input min-h-[72px]" value={ctx} onChange={(e) => setCtx(e.target.value)} /></label>
         <label className="block"><span className="label">Question</span><textarea className="input min-h-[96px]" value={text} onChange={(e) => setText(e.target.value)} /></label>
         <div>
           <span className="label">Options (select the correct one)</span>
@@ -147,7 +149,7 @@ export default function Admin() {
       if (filter === 'figure' && !q.flags.some((f) => f.includes('figure'))) return false;
       if (filter === 'duplicates' && q.duplicate !== 'exact' && q.duplicate !== 'likely') return false;
       if (filter === 'hidden' && !hiddenIds.has(q.id)) return false;
-      return !s || q.id.toLowerCase().includes(s) || q.question.toLowerCase().includes(s);
+      return !s || q.id.toLowerCase().includes(s) || q.question.toLowerCase().includes(s) || (q.context ?? '').toLowerCase().includes(s);
     });
   }, [questions, search, filter, subject, hiddenIds]);
   useEffect(() => setPage(0), [search, filter, subject]);
