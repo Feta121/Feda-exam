@@ -34,7 +34,7 @@ export default function Dashboard() {
         <Stat label="Average score" value={avg === null ? '—' : `${avg}%`} hint={`pass mark ${settings.passMark}%`} />
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-3">
         <Link to="/exam" className="card group p-5 transition hover:border-teal-500">
           <p className="text-lg font-bold text-navy-900 dark:text-white">Start Mock Exam</p>
           <p className="mt-1 text-sm text-slate-500">Timed, randomly generated, no answers until you submit.</p>
@@ -52,7 +52,7 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-5">
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-5">
         <section className="card p-5 lg:col-span-3">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-bold text-navy-900 dark:text-white">Recent results</h2>
@@ -64,12 +64,12 @@ export default function Dashboard() {
             <ul className="divide-y divide-slate-100 dark:divide-navy-800">
               {attempts.slice(0, 5).map((a) => (
                 <li key={a.id}>
-                  <Link to={`/results/${a.id}`} className="flex items-center justify-between gap-3 py-2.5 hover:text-teal-600">
-                    <span className="min-w-0">
+                  <Link to={`/results/${a.id}`} className="flex min-w-0 items-center justify-between gap-3 py-2.5 hover:text-teal-600">
+                    <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold">{a.title}</span>
                       <span className="text-xs text-slate-500">{new Date(a.finishedAt).toLocaleString()}</span>
                     </span>
-                    <span className={`chip ${a.passed ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200' : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200'}`}>{a.correct}/{a.total} · {a.percent}%</span>
+                    <span className={`chip shrink-0 whitespace-nowrap ${a.passed ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200' : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200'}`}>{a.correct}/{a.total} · {a.percent}%</span>
                   </Link>
                 </li>
               ))}

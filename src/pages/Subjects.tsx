@@ -21,7 +21,7 @@ export default function Subjects() {
   return (
     <div>
       <PageHeader title="Subjects" subtitle="Questions are grouped from the chapters of your source books. Pick a subject to practise or take a mock exam on it." />
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">
         {subjects.map((s) => {
           const e = info.get(s)!;
           const st = stats.get(s);

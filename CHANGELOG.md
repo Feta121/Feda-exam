@@ -26,3 +26,7 @@
 - The case text had been stuck to the end of the previous question's last answer option; it was separated out and the options cleaned. Stray "Directions" fragments in three Comprehensive Review options were removed.
 - The gestational age in the questions 55-58 case now reads 34¹ weeks as printed in the book (the PDF text had flattened it to "341").
 - Admin: the question editor has a "Shared case" box, and the search also looks inside cases.
+
+## Round 7 corrections
+- Dashboard on phones: the "Recent results" and "Study progress" cards no longer stretch wider than the screen. A long exam title now shortens with "…" and the score badge ("8/20 · 40%") stays on one line.
+- The same weakness was removed everywhere: every multi-column layout in the app now declares a shrinkable base column, and every card may shrink below the width of its content. A test now fails if a layout is added without this.

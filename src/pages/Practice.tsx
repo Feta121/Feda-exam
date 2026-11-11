@@ -101,7 +101,7 @@ export default function Practice() {
   return (
     <div>
       <PageHeader title="Practice" subtitle={mode === 'wrong' ? 'Questions you last answered incorrectly' : mode === 'bookmarks' ? 'Your bookmarked questions' : 'Untimed practice: click an answer to see the result and explanation straight away'} />
-      <div className="card mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="card mb-4 grid grid-cols-[minmax(0,1fr)] gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
         <Select label="Subject" value={subject} onChange={(v) => setParam('subject', v)}>
           <option value="">All subjects</option>
           {subjects.map((s) => <option key={s}>{s}</option>)}

@@ -84,7 +84,7 @@ export default function ExamSetup() {
         )}
 
         {mode === 'source' && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2">
             <Select label="Source" value={source} onChange={(v) => { setSource(v); setTopic(''); }}>
               {sources.map((n) => <option key={n}>{n}</option>)}
             </Select>
@@ -111,7 +111,7 @@ export default function ExamSetup() {
           {pool.length < effective || (typeof count === 'number' && count > pool.length) ? <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">Only {pool.length} matching questions are available, so the exam will have {effective}.</p> : null}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="label">Duration (minutes)</span>
             <input className="input" type="number" min={1} max={600} value={mins} onChange={(e) => setMinutes(Math.max(1, Number(e.target.value) || 1))} />

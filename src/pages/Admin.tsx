@@ -105,7 +105,7 @@ function Editor({ q, onClose }: { q: Question | null; onClose: () => void }) {
           {opts.length < 8 && <button type="button" className="mt-2 text-sm font-semibold text-teal-600" onClick={() => setOpts([...opts, ['ABCDEFGH'[opts.length] ?? String(opts.length + 1), '']])}>+ Add option</button>}
         </div>
         <label className="block"><span className="label">Explanation</span><textarea className="input min-h-[96px]" value={expl} onChange={(e) => setExpl(e.target.value)} /></label>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2">
           <label className="block"><span className="label">Subject</span><input className="input" list="subjects" value={subject} onChange={(e) => setSubject(e.target.value)} /><datalist id="subjects">{subjects.map((s) => <option key={s} value={s} />)}</datalist></label>
           <label className="block"><span className="label">Topic</span><input className="input" value={topic} onChange={(e) => setTopic(e.target.value)} /></label>
         </div>
@@ -191,7 +191,7 @@ export default function Admin() {
 
       {tab === 'questions' && (
         <>
-          <div className="card mb-4 grid gap-3 p-4 md:grid-cols-3">
+          <div className="card mb-4 grid grid-cols-[minmax(0,1fr)] gap-3 p-4 md:grid-cols-3">
             <label className="block"><span className="label">Search</span><input className="input" placeholder="ID or text" value={search} onChange={(e) => setSearch(e.target.value)} /></label>
             <Select label="Show" value={filter} onChange={(v) => setFilter(v as Filter)}>
               <option value="review">Needs manual review</option><option value="ai">AI-generated answers</option><option value="nokey">No answer key</option><option value="unverified">Not verified</option><option value="figure">Needs a figure</option><option value="duplicates">Likely duplicates</option><option value="hidden">Hidden</option><option value="all">All questions</option>
@@ -231,7 +231,7 @@ export default function Admin() {
         <div className="space-y-3">
           <p className="text-sm text-slate-500">Nothing is deleted automatically. Hide one copy to remove it from exams, or leave both.</p>
           {dupPairs.slice(0, 100).map(([a, b]) => (
-            <div key={a.id + b.id} className="card grid gap-3 p-4 md:grid-cols-2">
+            <div key={a.id + b.id} className="card grid grid-cols-[minmax(0,1fr)] gap-3 p-4 md:grid-cols-2">
               {[a, b].map((q) => (
                 <div key={q.id}>
                   <p className="text-xs text-slate-500">{q.id} · {q.source}</p>

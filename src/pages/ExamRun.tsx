@@ -146,7 +146,7 @@ export default function ExamRun() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[1fr_260px]">
+      <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-6 px-4 py-6 lg:grid-cols-[minmax(0,1fr)_260px]">
         <main>
           {pageIds.map((qid, k) => {
             const i = start + k;

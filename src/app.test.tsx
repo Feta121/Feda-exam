@@ -91,6 +91,23 @@ describe('loading screen', () => {
   });
 });
 
+describe('dashboard on a narrow phone', () => {
+  it('long exam titles shrink with an ellipsis and the score badge never wraps, so the page cannot stretch sideways', async () => {
+    const t = Date.now();
+    localStorage.setItem('ame:attempts', JSON.stringify([{ id: 'a1', title: 'A Comprehensive Review 1001 – General Anesthesia exam with a really long extra title', mode: 'source', startedAt: t - 600_000, finishedAt: t, durationSec: 1200, timeTakenSec: 600, total: 20, correct: 8, incorrect: 12, unanswered: 0, percent: 40, passMark: 50, passed: false, autoSubmitted: false, items: [] }]));
+    await ready('/');
+    const title = screen.getByText(/A Comprehensive Review 1001 – General Anesthesia exam with a really long/);
+    expect(title.className).toMatch(/\btruncate\b/);
+    expect(title.parentElement!.className).toMatch(/\bmin-w-0\b/);
+    const badge = screen.getByText(/8\/20 · 40%/);
+    expect(badge.className).toMatch(/\bshrink-0\b/);
+    expect(badge.className).toMatch(/\bwhitespace-nowrap\b/);
+    const row = screen.getByText('Recent results').closest('div.grid')!;
+    expect(row.className).toContain('grid-cols-[minmax(0,1fr)]'); // the column can shrink to the phone width
+    expect(screen.getByText('Study progress').closest('section')!.parentElement).toBe(row); // both cards share that column
+  });
+});
+
 describe('dashboard', () => {
   it('shows real totals from the question bank', async () => {
     await ready('/');
